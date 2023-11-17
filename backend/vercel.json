@@ -1,0 +1,20 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "src/index.js",  
+        "use": "@vercel/node"  
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "src/index.js"  
+      }
+    ],
+    "env": {
+      "MONGO_URI": "ton_uri_de_base_de_donnees",  
+      "SECRET_KEY": "ta_clé_secrète"
+    }
+  }
+  
