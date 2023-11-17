@@ -29,16 +29,14 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
+    const user = await User.findOne({ username });
     if (!user) {
       throw new Error('User not found');
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new Error('Invalid credentials');
     }
-  
-    
     const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
