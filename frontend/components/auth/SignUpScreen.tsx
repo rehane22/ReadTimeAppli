@@ -10,7 +10,13 @@ const SignupScreen: React.FC = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post("http://192.168.1.41:3000/auth/signup", {
+    /*   const response = await axios.post("http://192.168.1.41:3000/auth/signup", {
+        username,
+        email,
+        password,
+      }); */
+
+      const response = await axios.post("https://backend-two-beige.vercel.app/auth/signup", {
         username,
         email,
         password,

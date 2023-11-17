@@ -12,7 +12,11 @@ const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.1.41:3000/auth/login", {
+      /* const response = await axios.post("http://192.168.1.41:3000/auth/login", {
+        username,
+        password,
+      }); */
+      const response = await axios.post("https://backend-two-beige.vercel.app/auth/login", {
         username,
         password,
       });
