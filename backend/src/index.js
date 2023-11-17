@@ -6,7 +6,7 @@ const mongo_uri = process.env.MONGO_URI;
 const authRoutes = require('./routes/auth');
 const port = process.env.PORT || 3000;
 
-mongoose.connect(mongo_uri,
+mongoose.connect("mongodb+srv://rehanemigan:Rehane22@readtime.kwbygcq.mongodb.net/?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
