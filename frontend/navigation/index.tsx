@@ -1,21 +1,32 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "../screens/HomeScreen";
+import LibraryScreen from "../screens/LibraryScreen";
+import AccountScreen from "../screens/AccountScreen";
 import LoginScreen from "../components/auth/LoginScreen";
 import SignupScreen from "../components/auth/SignUpScreen";
+import { WelcomeScreen } from "../screens/WelcomeScreen";
 
 
-const Stack = createNativeStackNavigator();
+const AuthStack = createStackNavigator();
+const BottomTab = createBottomTabNavigator();
 
-const Navigation: React.FC = () => {
+export const AuthStackNavigator: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthStack.Navigator>
+      <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="Signup" component={SignupScreen} />
+    </AuthStack.Navigator>
   );
 };
 
-export default Navigation;
+export const MainBottomTabNavigator: React.FC = () => {
+  return (
+    <BottomTab.Navigator>
+      <BottomTab.Screen name="Library" component={LibraryScreen} />
+      <BottomTab.Screen name="Home" component={HomeScreen} />
+      <BottomTab.Screen name="Account" component={AccountScreen} />
+    </BottomTab.Navigator>
+  );
+};

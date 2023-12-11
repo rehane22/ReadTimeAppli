@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
 
+
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigation = useNavigation();
-
+  const { login } = useAuth(); 
+  
   const handleLogin = async () => {
     try {
-      /* const response = await axios.post("http://192.168.1.41:3000/auth/login", {
-        username,
-        password,
-      }); */
-      const response = await axios.post("https://backend-two-beige.vercel.app/auth/login", {
+      const response = await axios.post(`${apiUrl}/auth/login`, {
         username,
         password,
       });
-
       setMessage(`Bienvenue!`);
+      login(response.data); 
+      
     } catch (error) {
       console.error("Erreur de connexion:", error);
       setMessage("Échec de la connexion. Vérifiez vos informations.");
@@ -48,9 +49,7 @@ const LoginScreen: React.FC = () => {
         <Text style={styles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
       <Text style={styles.message}>{message}</Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Signup")}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
         <Text style={styles.linkText}>Pas encore inscrit ? S'inscrire</Text>
       </TouchableOpacity>
     </View>
@@ -89,9 +88,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "red",
   },
-  linkText:{
+  linkText: {
     color: "blue",
-  }
+  },
 });
 
 export default LoginScreen;

@@ -1,28 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+
+
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const SignupScreen: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { login } = useAuth(); 
 
   const handleSignup = async () => {
     try {
-    /*   const response = await axios.post("http://192.168.1.41:3000/auth/signup", {
+      const response = await axios.post(`${apiUrl}/auth/signup`, {
         username,
-        email,
-        password,
-      }); */
-
-      const response = await axios.post("https://backend-two-beige.vercel.app/auth/signup", {
-        username,
-        email,
         password,
       });
 
       setMessage(`Inscription réussie !`);
+      login(response.data); 
     } catch (error) {
       console.error("Erreur d'inscription:", error);
       setMessage("Échec de l'inscription. Vérifiez vos informations.");
