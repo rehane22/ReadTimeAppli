@@ -20,9 +20,9 @@ const LoginScreen: React.FC = () => {
         username,
         password,
       });
-
       setMessage(`Bienvenue!`);
       login(response.data); 
+      
     } catch (error) {
       console.error("Erreur de connexion:", error);
       setMessage("Échec de la connexion. Vérifiez vos informations.");

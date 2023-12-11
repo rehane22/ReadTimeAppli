@@ -1,26 +1,46 @@
 // screens/PersonalLibraryScreen.tsx
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 const LibraryScreen: React.FC = () => {
   const { user } = useAuth();
   const [library, setLibrary] = useState([]);
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-
+  const User = user.user;
   useEffect(() => {
-    if (user) {
+    if (User) {
       getPersonalLibrary();
     }
-  }, [user]);
+  }, [User]);
 
   const getPersonalLibrary = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/personal-library/${user._id}`);
+      const response = await axios.get(`${apiUrl}/personalLibrary/${User._id}`);
       setLibrary(response.data);
+      getPersonalLibrary();
     } catch (error) {
-      console.error('Erreur lors de la récupération de la bibliothèque personnelle', error);
+      console.error(
+        "Erreur lors de la récupération de la bibliothèque personnelle",
+        error
+      );
+    }
+  };
+
+  const handleRemoveBook = async (bookId) => {
+    try {
+      console.log(bookId);
+      await axios.delete(`${apiUrl}/personalLibrary/remove/${User._id}/${bookId}`);
+      getPersonalLibrary();
+    } catch (error) {
+      console.error("Erreur lors de la suppression du livre", error);
     }
   };
 
@@ -34,7 +54,9 @@ const LibraryScreen: React.FC = () => {
           <View style={styles.bookItem}>
             <Text>{item.title}</Text>
             <Text>{item.author}</Text>
-            {/* Ajoute d'autres détails du livre ici */}
+            <TouchableOpacity onPress={() => handleRemoveBook(item._id)}>
+              <Text style={styles.removeButton}>Supprimer</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -45,8 +67,8 @@ const LibraryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   title: {
@@ -56,9 +78,13 @@ const styles = StyleSheet.create({
   bookItem: {
     marginBottom: 10,
     padding: 10,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 5,
+  },
+  removeButton: {
+    color: "red",
+    marginTop: 5,
   },
 });
 
