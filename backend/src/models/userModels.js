@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   dateOfBirth: { type: Date },
   country: { type: String },
   registrationDate: { type: Date, default: Date.now },
+  resetToken: { type: String },
+  resetTokenExpiration: { type: Date },
 });
 
 const User = mongoose.model('User', userSchema);
