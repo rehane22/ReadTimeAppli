@@ -1,16 +1,38 @@
 // screens/HomeScreen.tsx
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet , TextInput, FlatList} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  FlatList,
+} from "react-native";
 import axios from "axios";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
+import { Book } from "../types/book";
+import { useNavigation } from "@react-navigation/native";
 
-const HomeScreen: React.FC = () => {
+const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Book[]>([]);
   const { user } = useAuth();
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-  const User = user.user
+  const userData = user?.user;
+  const navigation = useNavigation();
+  
+  const handleGetBookDetails = async (bookId: string) => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/books/v1/volumes/${bookId}`
+      );
+  
+      console.log("Détails complets du livre :", response.data);
+      navigation.navigate('BookDetail', { bookDetails: response.data });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des détails du livre", error);
+    }
+  };
 
   const handleSearch = async () => {
     try {
@@ -23,25 +45,28 @@ const HomeScreen: React.FC = () => {
     }
   };
 
-  const handleAddToLibrary = async (book) => {
+  const handleAddToLibrary = async (book: Book) => {
     try {
       await axios.post(`${apiUrl}/personalLibrary/add`, {
-        user: User._id,
+        user: userData._id,
         title: book.volumeInfo.title,
         author: book.volumeInfo.authors && book.volumeInfo.authors.join(", "),
-        coverImageUrl: book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail,
+        coverImageUrl:
+          book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail,
       });
-  
       console.log("Livre ajouté à la bibliothèque personnelle");
     } catch (error) {
-      console.error("Erreur lors de l'ajout à la bibliothèque personnelle", error);
+      console.error(
+        "Erreur lors de l'ajout à la bibliothèque personnelle",
+        error
+      );
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bienvenue sur TonApp !</Text>
-      <TextInput 
+      <TextInput
         style={styles.input}
         placeholder="Rechercher des livres par titre, auteur ou genre"
         value={searchTerm}
@@ -50,14 +75,18 @@ const HomeScreen: React.FC = () => {
       <TouchableOpacity style={styles.button} onPress={handleSearch}>
         <Text style={styles.buttonText}>Rechercher</Text>
       </TouchableOpacity>
-
       <FlatList
         data={searchResults}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.resultItem}>
             <Text>{item.volumeInfo.title}</Text>
-            <Text>{item.volumeInfo.authors && item.volumeInfo.authors.join(", ")}</Text>
+            <Text>
+              {item.volumeInfo.authors && item.volumeInfo.authors.join(", ")}
+            </Text>
+            <TouchableOpacity onPress={() => handleGetBookDetails(item.id)}>
+              <Text>Voir les détails du livre</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => handleAddToLibrary(item)}>
               <Text>Ajouter à la bibliothèque</Text>
             </TouchableOpacity>
@@ -66,7 +95,7 @@ const HomeScreen: React.FC = () => {
       />
     </View>
   );
-}; 
+};
 
 const styles = StyleSheet.create({
   container: {

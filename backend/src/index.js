@@ -16,6 +16,7 @@ mongoose.connect(mongo_uri,
   })
 
 mongoose.connection.on('connected',()=>{
+  console.log(process.env.FRONT_END)
   console.log("connected to mongo")
 })
 mongoose.connection.on('error',(error)=>{
