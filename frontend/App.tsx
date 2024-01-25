@@ -1,42 +1,38 @@
-// App.js
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { MainBottomTabNavigator, AuthStackNavigator } from "./navigation";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import { StyleSheet } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
 
+import WelcomeScreen from "./screens/WelcomeScreen";
+import { AuthProvider } from "./context/AuthContext";
+import { MainStackNavigator } from "./navigation";
+import { BookDetailScreen } from "./screens/BooksDetailsScreen";
+
+const Stack = createStackNavigator();
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <NavigationContainer>
-        <RootNavigator />
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={MainStackNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="BookDetail"
+            component={BookDetailScreen}
+            options={{ title: "Book Details" }}
+          />
+        </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
   );
 };
 
-const RootNavigator: React.FC = () => {
-  const { user } = useAuth();
-
-  return user ? <MainBottomTabNavigator /> : <AuthStackNavigator />;
-};
-
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    button: {
-      backgroundColor: "blue",
-      padding: 10,
-      borderRadius: 5,
-      marginTop: 10,
-    },
-    buttonText: {
-      color: "white",
-    },
-  });
-  
-  export default App;
+export default App;

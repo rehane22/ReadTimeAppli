@@ -1,32 +1,31 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "../screens/HomeScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LibraryScreen from "../screens/LibraryScreen";
+import HomeScreen from "../screens/HomeScreen";
 import AccountScreen from "../screens/AccountScreen";
-import LoginScreen from "../components/auth/LoginScreen";
-import SignupScreen from "../components/auth/SignUpScreen";
-import { WelcomeScreen } from "../screens/WelcomeScreen";
 
-
-const AuthStack = createStackNavigator();
+const Stack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
-export const AuthStackNavigator: React.FC = () => {
-  return (
-    <AuthStack.Navigator>
-      <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
-      <AuthStack.Screen name="Login" component={LoginScreen} />
-      <AuthStack.Screen name="Signup" component={SignupScreen} />
-    </AuthStack.Navigator>
-  );
-};
-
-export const MainBottomTabNavigator: React.FC = () => {
+export const MainStackNavigator = () => {
   return (
     <BottomTab.Navigator>
-      <BottomTab.Screen name="Library" component={LibraryScreen} />
-      <BottomTab.Screen name="Home" component={HomeScreen} />
-      <BottomTab.Screen name="Account" component={AccountScreen} />
+      <BottomTab.Screen
+        name="Library"
+        component={LibraryScreen}
+        options={{ headerShown: false }}
+      />
+      <BottomTab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <BottomTab.Screen
+        name="Account"
+        component={AccountScreen}
+        options={{ headerShown: false }}
+      />
     </BottomTab.Navigator>
   );
 };

@@ -9,12 +9,15 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
-const LibraryScreen: React.FC = () => {
+
+const LibraryScreen = ({ navigation }) => {
   const { user } = useAuth();
   const [library, setLibrary] = useState([]);
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-  const User = user.user;
+
+  const User = user?.user;
   useEffect(() => {
     if (User) {
       getPersonalLibrary();
@@ -36,14 +39,15 @@ const LibraryScreen: React.FC = () => {
 
   const handleRemoveBook = async (bookId) => {
     try {
-      console.log(bookId);
-      await axios.delete(`${apiUrl}/personalLibrary/remove/${User._id}/${bookId}`);
+      await axios.delete(
+        `${apiUrl}/personalLibrary/remove/${User._id}/${bookId}`
+      );
       getPersonalLibrary();
     } catch (error) {
       console.error("Erreur lors de la suppression du livre", error);
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ma Bibliothèque Personnelle</Text>
