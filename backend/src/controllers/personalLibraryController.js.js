@@ -8,8 +8,6 @@ exports.addBookToLibrary = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "L'utilisateur est requis dans la requête." });
     }
-
-    // Recherche si le livre existe déjà dans la bibliothèque personnelle de l'utilisateur
     const existingBook = await PersonalBook.findOne({
       user: user,
       title: title,
