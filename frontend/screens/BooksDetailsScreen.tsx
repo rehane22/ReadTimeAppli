@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import { Book } from "../types/book";
 
@@ -42,44 +42,126 @@ export const BookDetailScreen = ({ route }: BookDetailScreenProps) => {
     </ScrollView>
   );
 };
+*/
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import { Book } from "../types/book";
+import { ProgressTabContent } from "../components/BookDetails/ProgressTabContent";
+import { AboutTabContent } from "../components/BookDetails/AboutTabContent";
+import { HeaderBookDetails } from "../components/BookDetails/Header";
+
+interface BookDetailScreenProps {
+  route: {
+    params: {
+      bookDetails: Book;
+    };
+  };
+}
+
+
+const handleAddToLibrary = async (book: Book) => {
+  try {
+    await axios.post(`${apiUrl}/personalLibrary/add`, {
+      user: userData._id,
+      title: book.volumeInfo.title,
+      author: book.volumeInfo.authors && book.volumeInfo.authors.join(", "),
+      coverImageUrl:
+        book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail,
+    });
+    console.log("Livre ajouté à la bibliothèque personnelle");
+  } catch (error) {
+    console.error(
+      "Erreur lors de l'ajout à la bibliothèque personnelle",
+      error
+    );
+  }
+};
+
+export const BookDetailScreen = ({ route }: BookDetailScreenProps) => {
+  const { bookDetails } = route.params;
+
+  const [activeTab, setActiveTab] = useState("About");
+
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <HeaderBookDetails bookDetails={bookDetails} />
+      <View style={styles.tabs}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "About" && styles.activeTab]}
+          onPress={() => handleTabChange("About")}
+        >
+          <Text style={styles.tabText}>À propos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "Progress" && styles.activeTab]}
+          onPress={() => handleTabChange("Progress")}
+        >
+          <Text style={styles.tabText}>Progression</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={styles.content}>
+        {activeTab === "About" && (
+          <View style={styles.tabContent}>
+            <AboutTabContent bookDetails={bookDetails} />
+          </View>
+        )}
+        {activeTab === "Progress" && (
+          <View style={styles.tabContent}>
+            <ProgressTabContent />
+          </View>
+        )}
+      </ScrollView>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-  },
-  image: {
-    width: "100%",
-    height: 300,
-    marginBottom: 20,
-    resizeMode: "cover",
-    borderRadius: 10,
-  },
-  detailsContainer: {
-    marginBottom: 20,
+  header: {
+    padding: 10,
+    backgroundColor: "#ccc",
+    alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
   },
   author: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  description: {
     fontSize: 16,
-    marginBottom: 10,
-    lineHeight: 22,
+    fontStyle: "italic",
   },
-  publisher: {
-    fontSize: 16,
-    marginBottom: 5,
+  tabs: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
-  publishedDate: {
+  tab: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: "blue",
+  },
+  tabText: {
     fontSize: 16,
-    marginBottom: 5,
+    fontWeight: "bold",
+  },
+  content: {
+    flex: 1,
+    padding: 10,
+  },
+  tabContent: {
+    marginTop: 20,
   },
 });

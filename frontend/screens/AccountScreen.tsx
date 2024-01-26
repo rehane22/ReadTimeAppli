@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { TextInput } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 
 const AccountScreen = () => {
   const { user, logout } = useAuth();
+  const navigation = useNavigation();
   const [profileData, setProfileData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -21,8 +23,10 @@ const AccountScreen = () => {
 
   const handleLogout = async () => {
     try {
-      logout(); 
+      
       await axios.post(`${apiUrl}/auth/logout`);
+      logout(); 
+      navigation.navigate('Welcome');
     } catch (error) {
       console.error("Erreur lors de la déconnexion :", error);
   
