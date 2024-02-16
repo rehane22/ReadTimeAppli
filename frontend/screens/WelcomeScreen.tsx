@@ -39,7 +39,6 @@ const WelcomeScreen = () => {
       const response = await axios.post(`${apiUrl}/auth/login`, loginData);
       setLoginData({ username: "", password: "" });
       setModalVisible(false);
-      console.log(response.data);
       login(response.data);
       navigation.navigate('Home');
     } catch (error) {

@@ -38,7 +38,7 @@ const AccountScreen = () => {
     try {
   
       const response = await axios.post(`${apiUrl}/auth/update`, profileData);
-      console.log("Profil mis à jour avec succès:", response.data);
+     
 
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil:", error);

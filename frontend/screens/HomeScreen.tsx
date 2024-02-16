@@ -27,7 +27,7 @@ const HomeScreen = () => {
         `https://www.googleapis.com/books/v1/volumes/${bookId}`
       );
   
-      console.log("Détails complets du livre :", response.data);
+    
       navigation.navigate('BookDetail', { bookDetails: response.data });
     } catch (error) {
       console.error("Erreur lors de la récupération des détails du livre", error);
