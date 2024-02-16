@@ -1,5 +1,4 @@
-// screens/PersonalLibraryScreen.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -7,57 +6,34 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
 
+import { useLibrary } from "./logics";
+import { useBooks } from "../logics/books";
+import { Book } from "../../types/book";
 
 const LibraryScreen = ({ navigation }) => {
-  const { user } = useAuth();
-  const [library, setLibrary] = useState([]);
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-
-  const User = user?.user;
-  useEffect(() => {
-    if (User) {
-      getPersonalLibrary();
-    }
-  }, [User]);
-
-  const getPersonalLibrary = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/personalLibrary/${User._id}`);
-      setLibrary(response.data);
-      getPersonalLibrary();
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération de la bibliothèque personnelle",
-        error
-      );
-    }
-  };
+  const { library, removeBookFromLibrary } = useLibrary();
+  const { handleGetBookDetails } = useBooks();
 
   const handleRemoveBook = async (bookId) => {
-    try {
-      await axios.delete(
-        `${apiUrl}/personalLibrary/remove/${User._id}/${bookId}`
-      );
-      getPersonalLibrary();
-    } catch (error) {
-      console.error("Erreur lors de la suppression du livre", error);
-    }
+    await removeBookFromLibrary(bookId);
   };
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ma Bibliothèque Personnelle</Text>
       <FlatList
         data={library}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item : Book) => item._id}
         renderItem={({ item }) => (
           <View style={styles.bookItem}>
             <Text>{item.title}</Text>
             <Text>{item.author}</Text>
+            <TouchableOpacity
+              onPress={() => handleGetBookDetails(item.googleBookId)}
+            >
+              <Text>Voir les détails du livre</Text>
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => handleRemoveBook(item._id)}>
               <Text style={styles.removeButton}>Supprimer</Text>
             </TouchableOpacity>

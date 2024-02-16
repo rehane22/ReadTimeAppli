@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
-import { useAuth } from "../context/AuthContext";
+
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 
@@ -39,7 +40,6 @@ const AccountScreen = () => {
   
       const response = await axios.post(`${apiUrl}/auth/update`, profileData);
      
-
     } catch (error) {
       console.error("Erreur lors de la mise à jour du profil:", error);
       

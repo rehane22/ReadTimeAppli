@@ -11,6 +11,10 @@ interface User {
   _id: string;
   username: string;
   email: string;
+  firstName : string;
+  lastName : string;
+  dateOfBirth : string;
+  country : string;
 }
 
 interface AuthContextProps {

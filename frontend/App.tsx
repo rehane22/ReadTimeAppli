@@ -5,7 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { MainStackNavigator } from "./navigation";
-import { BookDetailScreen } from "./screens/BooksDetailsScreen";
+import { BookDetailScreen } from "./screens/BooksDetails/BooksDetailsScreen";
 
 const Stack = createStackNavigator();
 

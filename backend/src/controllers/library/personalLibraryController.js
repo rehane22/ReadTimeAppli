@@ -1,9 +1,9 @@
-const PersonalBook = require("../models/PersonalBook");
+const PersonalBook = require("../../models/personalBook");
 
-
-exports.addBookToLibrary = async (req, res) => {
+const addBookToLibrary = async (req, res) => {
   try {
-    const { user, title, author, coverImageUrl } = req.body; 
+
+    const { user, title, author, coverImageUrl, googleBookId } = req.body;
 
     if (!user) {
       return res.status(400).json({ error: "L'utilisateur est requis dans la requête." });
@@ -17,31 +17,30 @@ exports.addBookToLibrary = async (req, res) => {
     if (existingBook) {
       return res.status(400).json({ error: "Ce livre est déjà dans votre bibliothèque." });
     }
-
-    const newBook = new PersonalBook({ user, title, author, coverImageUrl });
+    const newBook = new PersonalBook({ user, title, author, coverImageUrl, googleBookId });
     await newBook.save();
+    console.log("newBook", newBook)
     res.status(201).json({ message: 'Livre ajouté à la bibliothèque personnelle' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.getPersonalLibrary = async (req, res) => {
+const getPersonalLibrary = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const library = await PersonalBook.find({ user: userId }).populate('user'); 
+    const library = await PersonalBook.find({ user: userId }).populate('user');
     res.json(library);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-exports.removeBookFromLibrary = async (req, res) => {
+const removeBookFromLibrary = async (req, res) => {
   try {
     const userId = req.params.userId;
     const bookId = req.params.bookId;
-    
-    // Vérifie si le livre appartient à l'utilisateur avant de le supprimer
+
     const removedBook = await PersonalBook.findOneAndDelete({ _id: bookId, user: userId });
 
     if (removedBook) {
@@ -53,4 +52,11 @@ exports.removeBookFromLibrary = async (req, res) => {
     console.error("Erreur lors de la suppression du livre", error);
     res.status(500).json({ error: error.message });
   }
+};
+
+
+module.exports = {
+  addBookToLibrary,
+  getPersonalLibrary,
+  removeBookFromLibrary,
 };

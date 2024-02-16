@@ -1,4 +1,3 @@
-// Exemple de la fonction sendEmail avec Nodemailer (à adapter selon tes besoins)
 const nodemailer = require('nodemailer');
 const user_gmail = process.env.USER_GMAIL
 const password_gmail = process.env.PASSWORD_GMAIL

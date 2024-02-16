@@ -1,9 +1,9 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModels');
+const User = require('../../models/userModels');
 const nodemailer = require('nodemailer');
-const { isStrongPassword, sendEmail, generateCode } = require('../utils/sendEmail');
+const { isStrongPassword, sendEmail, generateCode } = require('../../utils/sendEmail');
 const secretKey = process.env.SECRET_KEY
 
 

@@ -1,7 +1,7 @@
-const CommentBook = require('../models/comment');
+const CommentBook = require('../../models/commentBook');
 
 
-exports.addCommentBook = async (req, res) => {
+const addCommentBook = async (req, res) => {
   try {
     const { user, book, content } = req.body;
     const comment = new CommentBook({ user, book, content });
@@ -14,13 +14,22 @@ exports.addCommentBook = async (req, res) => {
 };
 
 
-exports.getCommentsByBook = async (req, res) => {
+const getCommentsByBook = async (req, res) => {
+
   try {
     const bookId = req.params.bookId;
-    const comments = await Comment.find({ book: bookId }).populate('user', 'username');
+
+    const comments = await CommentBook.find({ book: bookId }).populate('user', 'username');
+
     res.json(comments);
   } catch (error) {
     console.error("Erreur lors de la récupération des commentaires :", error);
     res.status(500).json({ error: 'Erreur serveur lors de la récupération des commentaires' });
   }
+};
+
+
+module.exports = {
+  addCommentBook,
+  getCommentsByBook
 };

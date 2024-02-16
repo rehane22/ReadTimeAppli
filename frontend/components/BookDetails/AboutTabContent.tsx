@@ -10,9 +10,10 @@ import {
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
+
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export const AboutTabContent = ({ bookDetails }) => {
+export const AboutTabContent = ({ bookDetails, bookId }) => {
   const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -22,7 +23,20 @@ export const AboutTabContent = ({ bookDetails }) => {
 
   useEffect(() => {
     axios
-      .get(`${apiUrl}/book/${bookDetails._id}/average-rating`)
+      .get(`${apiUrl}/book/ratings/${userData._id}/${bookId}`)
+      .then((response) => {
+        if (response.data.rating) {
+          setRating(response.data.rating);
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération de la note de l'utilisateur :",
+          error
+        );
+      });
+    axios
+      .get(`${apiUrl}/book/ratings/average/${bookId}`)
       .then((response) => {
         setAverageRating(response.data.averageRating);
       })
@@ -34,9 +48,9 @@ export const AboutTabContent = ({ bookDetails }) => {
       });
 
     axios
-      .get(`${apiUrl}/book/${bookDetails._id}/comments`)
+      .get(`${apiUrl}/book/comments/${bookId}`)
       .then((response) => {
-        setComments(response.data.comments);
+        setComments(response.data);
       })
       .catch((error) => {
         console.error(
@@ -44,7 +58,7 @@ export const AboutTabContent = ({ bookDetails }) => {
           error
         );
       });
-  }, []);
+  }, [averageRating, comment]);
 
   const handleStarPress = (star) => {
     setRating(star);
@@ -52,20 +66,23 @@ export const AboutTabContent = ({ bookDetails }) => {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(`${apiUrl}/book/ratings`, {
-        user: userData._id,
-        book: bookDetails._id,
-        rating: rating,
-      });
+      if (rating > 0) {
+        await axios.post(`${apiUrl}/book/ratings`, {
+          user: userData._id,
+          book: bookId,
+          rating: rating,
+        });
+        setRating(0);
+      }
 
-      await axios.post(`${apiUrl}/book/comments`, {
-        user: userData._id,
-        book: bookDetails._id,
-        content: comment,
-      });
-
-      setRating(0);
-      setComment("");
+      if (comment.trim() !== "") {
+        await axios.post(`${apiUrl}/book/comments`, {
+          user: userData._id,
+          book: bookId,
+          content: comment,
+        });
+        setComment("");
+      }
     } catch (error) {
       console.error("Erreur lors de la soumission :", error);
     }
@@ -74,7 +91,6 @@ export const AboutTabContent = ({ bookDetails }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Notation :</Text>
-      {/* Afficher la moyenne des notes */}
       <Text style={styles.rating}>{averageRating}</Text>
 
       <View style={styles.starsContainer}>
@@ -92,10 +108,9 @@ export const AboutTabContent = ({ bookDetails }) => {
       <Text style={styles.label}>Commentaires :</Text>
       <View>
         {comments.map((comment, index) => (
-          <Text key={index}>{comment}</Text>
+          <Text key={index}>{comment.content}</Text>
         ))}
       </View>
-
       <TextInput
         style={styles.input}
         multiline
