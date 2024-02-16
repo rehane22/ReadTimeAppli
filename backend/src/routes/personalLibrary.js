@@ -6,5 +6,6 @@ const personalLibraryController = require('../controllers/library/personalLibrar
 router.post('/add', personalLibraryController.addBookToLibrary);
 router.get('/:userId', personalLibraryController.getPersonalLibrary);
 router.delete('/remove/:userId/:bookId', personalLibraryController.removeBookFromLibrary);
+router.get('/check/:userId/:bookId', personalLibraryController.checkBookInLibrary);
 
 module.exports = router;

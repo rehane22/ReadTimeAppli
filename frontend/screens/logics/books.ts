@@ -1,6 +1,6 @@
 // useBooks.tsx
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { Book } from "../../types/book";
@@ -14,6 +14,8 @@ export const useBooks = () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   const userData = user?.user;
   const navigation = useNavigation();
+  const [library, setLibrary] = useState([]);
+  
 
 
   const handleGetBookDetails = async (bookId: string) => {
@@ -58,13 +60,58 @@ export const useBooks = () => {
     }
   };
 
+  const checkIfBookInLibrary = async (bookId: string) => {
+    try {
+      const response = await axios.get(`${apiUrl}/personalLibrary/check/${userData?._id}/${bookId}`);
+      return { isInLibrary: response.data.isInLibrary, bookId: response.data.bookId };
+    } catch (error) {
+      console.error("Erreur lors de la vérification du livre dans la bibliothèque", error);
+      return { isInLibrary: false, bookId: null };
+    }
+  };
+
+ 
+
+  useEffect(() => {
+    if (userData) {
+      getPersonalLibrary();
+    }
+  }, [library]);
+
+  const getPersonalLibrary = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/personalLibrary/${userData._id}`);
+      setLibrary(response.data);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération de la bibliothèque personnelle",
+        error
+      );
+    }
+  };
+
+
+  const removeBookFromLibrary = async (bookId: string) => {
+    try {
+      await axios.delete(
+        `${apiUrl}/personalLibrary/remove/${userData._id}/${bookId}`
+      );
+      getPersonalLibrary();
+    } catch (error) {
+      console.error("Erreur lors de la suppression du livre", error);
+    }
+  };
+
   return {
+    library,
     searchTerm,
     setSearchTerm,
     searchResults,
     handleSearch,
     handleGetBookDetails,
-    handleAddToLibrary
+    handleAddToLibrary,
+    checkIfBookInLibrary,
+    removeBookFromLibrary
   };
 };
 

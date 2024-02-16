@@ -1,13 +1,12 @@
-// screens/HomeScreen.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   TextInput,
   FlatList,
 } from "react-native";
+import { Avatar, Button, Card, Text } from "react-native-paper";
 
 import { useBooks } from "./logics/books";
 
@@ -19,8 +18,24 @@ const HomeScreen = () => {
     handleSearch,
     handleGetBookDetails,
     handleAddToLibrary,
+    checkIfBookInLibrary,
   } = useBooks();
 
+  const [buttonLabel, setButtonLabel] = useState("Ajouter à la bibliothèque");
+  const isInLibrary = async (bookId) => {
+    const result = await checkIfBookInLibrary(bookId);
+    return result.isInLibrary;
+  };
+
+  useEffect(() => {
+    searchResults.forEach(async (item) => {
+      const isInLib = await isInLibrary(item.id);
+      setButtonLabel((prevLabels) => ({
+        ...prevLabels,
+        [item.id]: isInLib ? "Ajouté" : "Ajouter à la bibliothèque",
+      }));
+    });
+  }, [searchResults]);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bienvenue sur TonApp !</Text>
@@ -38,16 +53,34 @@ const HomeScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.resultItem}>
-            <Text>{item.volumeInfo.title}</Text>
-            <Text>
-              {item.volumeInfo.authors && item.volumeInfo.authors.join(", ")}
-            </Text>
-            <TouchableOpacity onPress={() => handleGetBookDetails(item.id)}>
-              <Text>Voir les détails du livre</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleAddToLibrary(item)}>
-              <Text>Ajouter à la bibliothèque</Text>
-            </TouchableOpacity>
+            <Card>
+              <Card.Cover
+                source={{ uri: item.volumeInfo.imageLinks.smallThumbnail }}
+              />
+              <Card.Content>
+                <Text variant="titleLarge">{item.volumeInfo.title}</Text>
+                <Text variant="bodyMedium">
+                  {item.volumeInfo.authors &&
+                    item.volumeInfo.authors.join(", ")}
+                </Text>
+              </Card.Content>
+              <Card.Actions>
+                <Button onPress={() => handleGetBookDetails(item.id)}>
+                  Voir les détails du livre
+                </Button>
+
+                <Button
+                  onPress={async () => {
+                    const isInLib = await isInLibrary(item.id);
+                    if (!isInLib) {
+                      handleAddToLibrary(item);
+                    }
+                  }}
+                >
+                  {buttonLabel[item.id]}
+                </Button>
+              </Card.Actions>
+            </Card>
           </View>
         )}
       />
@@ -84,11 +117,8 @@ const styles = StyleSheet.create({
     color: "white",
   },
   resultItem: {
-    marginBottom: 10,
+    width: "100%",
     padding: 10,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
   },
 });
 

@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-import { Book } from "../../types/book";
-import { IPersonalBook } from "../../types/personalBook";
+
 
 
 export const useLibrary = () => {
@@ -31,18 +30,9 @@ export const useLibrary = () => {
     }
   };
 
-  const removeBookFromLibrary = async (bookId: IPersonalBook) => {
-    try {
-      await axios.delete(
-        `${apiUrl}/personalLibrary/remove/${User._id}/${bookId}`
-      );
-      getPersonalLibrary();
-    } catch (error) {
-      console.error("Erreur lors de la suppression du livre", error);
-    }
-  };
 
-  return { library, removeBookFromLibrary };
+
+  return { library };
 };
 
 

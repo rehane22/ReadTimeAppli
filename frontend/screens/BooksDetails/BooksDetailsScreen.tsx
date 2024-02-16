@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Book } from "../../types/book";
 import { ProgressTabContent } from "../../components/BookDetails/ProgressTabContent";
-import { AboutTabContent } from "../../components/BookDetails/AboutTabContent";
+import { AboutTabContent } from "../../components/BookDetails/AboutTabContent/AboutTabContent";
 import { HeaderBookDetails } from "../../components/BookDetails/Header";
 
 interface BookDetailScreenProps {

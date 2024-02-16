@@ -12,10 +12,10 @@ import { useBooks } from "../logics/books";
 import { Book } from "../../types/book";
 
 const LibraryScreen = ({ navigation }) => {
-  const { library, removeBookFromLibrary } = useLibrary();
+  const { library, removeBookFromLibrary } = useBooks();
   const { handleGetBookDetails } = useBooks();
 
-  const handleRemoveBook = async (bookId) => {
+  const handleRemoveBook = async (bookId: string) => {
     await removeBookFromLibrary(bookId);
   };
 
@@ -24,7 +24,7 @@ const LibraryScreen = ({ navigation }) => {
       <Text style={styles.title}>Ma Bibliothèque Personnelle</Text>
       <FlatList
         data={library}
-        keyExtractor={(item : Book) => item._id}
+        keyExtractor={(item: Book) => item._id}
         renderItem={({ item }) => (
           <View style={styles.bookItem}>
             <Text>{item.title}</Text>

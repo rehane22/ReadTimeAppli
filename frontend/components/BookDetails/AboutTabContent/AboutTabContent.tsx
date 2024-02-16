@@ -9,58 +9,32 @@ import {
 } from "react-native";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
-import { useAuth } from "../../context/AuthContext";
+import { useAboutTabContent } from "./logics";
+import { Book } from "../../../types/book";
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+interface AboutTabContentProps {
+  bookDetails: Book;
+  bookId : string
+}
 
-export const AboutTabContent = ({ bookDetails, bookId }) => {
-  const { user } = useAuth();
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [averageRating, setAverageRating] = useState(0);
-  const [comments, setComments] = useState([]);
-  const userData = user?.user;
+export const AboutTabContent = ({ bookDetails, bookId }: AboutTabContentProps ) => {
+  const {
+    apiUrl,
+    rating,
+    setRating,
+    comment,
+    setComment,
+    averageRating,
+    comments,
+    userData,
+    getCommentsAndRatings
+  } = useAboutTabContent();
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/book/ratings/${userData._id}/${bookId}`)
-      .then((response) => {
-        if (response.data.rating) {
-          setRating(response.data.rating);
-        }
-      })
-      .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération de la note de l'utilisateur :",
-          error
-        );
-      });
-    axios
-      .get(`${apiUrl}/book/ratings/average/${bookId}`)
-      .then((response) => {
-        setAverageRating(response.data.averageRating);
-      })
-      .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération de la moyenne des notes :",
-          error
-        );
-      });
-
-    axios
-      .get(`${apiUrl}/book/comments/${bookId}`)
-      .then((response) => {
-        setComments(response.data);
-      })
-      .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération des commentaires :",
-          error
-        );
-      });
+   getCommentsAndRatings(bookId);
   }, [averageRating, comment]);
 
-  const handleStarPress = (star) => {
+  const handleStarPress = (star : number) => {
     setRating(star);
   };
 
@@ -107,7 +81,7 @@ export const AboutTabContent = ({ bookDetails, bookId }) => {
 
       <Text style={styles.label}>Commentaires :</Text>
       <View>
-        {comments.map((comment, index) => (
+        {comments.map((comment , index) => (
           <Text key={index}>{comment.content}</Text>
         ))}
       </View>

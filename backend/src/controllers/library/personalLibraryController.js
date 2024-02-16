@@ -19,7 +19,6 @@ const addBookToLibrary = async (req, res) => {
     }
     const newBook = new PersonalBook({ user, title, author, coverImageUrl, googleBookId });
     await newBook.save();
-    console.log("newBook", newBook)
     res.status(201).json({ message: 'Livre ajouté à la bibliothèque personnelle' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -54,9 +53,25 @@ const removeBookFromLibrary = async (req, res) => {
   }
 };
 
+const checkBookInLibrary = async (req, res) => {
+  try {
+    const { userId, bookId } = req.params;
+
+    const existingBook = await PersonalBook.findOne({ user: userId, googleBookId: bookId });
+    if (existingBook) {
+      return res.json({ isInLibrary: true , bookId: existingBook._id});
+    } else {
+      return res.json({ isInLibrary: false });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   addBookToLibrary,
   getPersonalLibrary,
   removeBookFromLibrary,
+  checkBookInLibrary,
 };
+

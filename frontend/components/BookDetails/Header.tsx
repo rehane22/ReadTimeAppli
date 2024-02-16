@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,41 +7,47 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
-import { Book } from "../../types/book";
 
-export const HeaderBookDetails = ({ bookDetails } ) => {
-  const handleAddToLibrary = async (book: Book) => {
-    const { user } = useAuth();
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-    const userData = user?.user;
-    try {
-      await axios.post(`${apiUrl}/personalLibrary/add`, {
-        user: userData._id,
-        title: book.volumeInfo.title,
-        author: book.volumeInfo.authors && book.volumeInfo.authors.join(", "),
-        coverImageUrl:
-          book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail,
-      });
-    } catch (error) {
-      console.error(
-        "Erreur lors de l'ajout à la bibliothèque personnelle",
-        error
-      );
+import { useBooks } from "../../screens/logics/books";
+
+export const HeaderBookDetails = ({ bookDetails }) => {
+  const { handleAddToLibrary, checkIfBookInLibrary, removeBookFromLibrary } =
+    useBooks();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [bookId, setBookId] = useState("");
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const checkIfBookInLibraryResult = await checkIfBookInLibrary(
+          bookDetails.id
+        );
+        setIsFavorite(checkIfBookInLibraryResult.isInLibrary);
+        setBookId(checkIfBookInLibraryResult.bookId);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la vérification du livre dans la bibliothèque",
+          error
+        );
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [bookDetails.id]);
+
+  const toggleFavorite = () => {
+    if (!isFavorite) {
+      handleAddToLibrary(bookDetails);
+    } else {
+      removeBookFromLibrary(bookId);
     }
-  };
-  const toggleFavorite = (/* {bookDetails} */) => {
-    ///handleAddToLibrary(bookDetails )
     setIsFavorite(!isFavorite);
   };
-  const [isFavorite, setIsFavorite] = useState(false);
-
 
   return (
     <View style={{ height: 200 }}>
       <TouchableOpacity onPress={() => toggleFavorite()}>
-        {isFavorite ? (
+        {!isFavorite ? (
           <MaterialIcons name="library-add" size={24} color="black" />
         ) : (
           <MaterialIcons name="library-add-check" size={24} color="black" />
