@@ -1,5 +1,6 @@
-interface Book {
+export interface Book {
     id: string;
+    googleBookId : string;
     volumeInfo: {
       title: string;
       authors: string[];
@@ -53,7 +54,3 @@ interface Book {
     selfLink: string;
     kind: string;
   }
-
-  export {
-    Book,
-}

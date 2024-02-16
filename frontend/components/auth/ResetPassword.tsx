@@ -1,6 +1,3 @@
-// ResetPassword.js
-
-import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert } from "react-native";
