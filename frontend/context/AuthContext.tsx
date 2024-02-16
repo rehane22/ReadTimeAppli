@@ -50,6 +50,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     AsyncStorage.removeItem("user");
   };
 
+  
+
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
