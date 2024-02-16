@@ -4,6 +4,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const mongo_uri = process.env.MONGO_URI;
 const authRoutes = require('./routes/auth');
+const bookRoutes = require('./routes/book');
 const personalLibraryRoutes = require('./routes/personalLibrary');
 
 
@@ -27,6 +28,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/auth", authRoutes);
+app.use("/book", bookRoutes);
 app.use("/personalLibrary", personalLibraryRoutes); 
 
 app.listen(port, () => {
